@@ -21,18 +21,64 @@
 #include <QMessageBox>
 #include "complexnumber.h"
 
-#define PLOT_HISTOGRAM
+//#define PLOT_HISTOGRAM
 
 using namespace std;
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass)
 {
     ui->setupUi(this);
 
+    space = 29;
+    deltaX = 24;
+    deltaY = 13;
+    deltaZ = 12;
+    voxelDiameter = 4;
+
+
     ap = new audioProcessor(DEFAULT_FFT_SIZE);
     ap->setFrameLength(DEFAULT_FRAME_LENGTH);
 
+    setCentralWidget();
+
+    connect(ui->soundcardSettingsAction, SIGNAL(triggered()), this, SLOT(onSoundcardSettingsAction()));
+    connect(ui->continuousRunPushButton, SIGNAL(pressed()), this, SLOT(onContinuousRunPushButton()));
+    connect(ui->stopRunPushButton, SIGNAL(pressed()), this, SLOT(onStopRunPushButton()));
+    connect(ap, SIGNAL(frameProcessed(fftProcessor*)), this, SLOT(onFrameProcessed(fftProcessor*)));
+
+    pix = new QPixmap(500,200);
+    QPainter *paint = new QPainter(pix);
+    //paint->setPen(*(new QColor(255,34,255,255)));
+    //paint->drawRect(15,15,100,100);
+    pix->fill(Qt::white);
+    paintCubeBase(paint);
+
+    myimage = new QLabel(/*this*/);
+    //myimage->setBackgroundRole(QPalette::Window);
+    myimage->setScaledContents(true);
+
+
+
+    myimage->setPixmap(*pix);
+    //myimage->setStyleSheet("QLabel { background-color : red; color : blue; }");
+
+    ui->verticalLayout->insertWidget(0, myimage);
+}
+
+
+MainWindow::~MainWindow()
+{
+    delete mainPlot;
+    //delete mainCurveZoomer;
+    delete ui;
+    delete ap;
+}
+
+
+void MainWindow::setCentralWidget()
+{
     mainPlot = new QwtPlot();
     initPlot(mainPlot, "Frequency", "Magnitude", 0, ap->getSampleRate()/2, 0, 5);
 
@@ -40,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent)
     mainCurveZoomer->setMousePattern(QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier);
     mainCurveZoomer->setMousePattern(QwtEventPattern::MouseSelect3,Qt::RightButton);
 
-    ui->verticalLayout->insertWidget(0,mainPlot);
+    ui->verticalLayout->insertWidget(1,mainPlot);
 
     mainCurveXData = (double*) malloc(sizeof(double) * DEFAULT_FFT_SIZE/2+1);
     mainCurveYData = (double*) malloc(sizeof(double) * DEFAULT_FFT_SIZE/2+1);
@@ -62,23 +108,9 @@ MainWindow::MainWindow(QWidget *parent)
     subCurve->attach(mainPlot);
 #endif
 
-   // mainPlot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLog10ScaleEngine ());
-
-
-    connect(ui->soundcardSettingsAction, SIGNAL(triggered()), this, SLOT(onSoundcardSettingsAction()));
-    connect(ui->continuousRunPushButton, SIGNAL(pressed()), this, SLOT(onContinuousRunPushButton()));
-    connect(ui->stopRunPushButton, SIGNAL(pressed()), this, SLOT(onStopRunPushButton()));
-    connect(ap, SIGNAL(frameProcessed(fftProcessor*)), this, SLOT(onFrameProcessed(fftProcessor*)));
+    // mainPlot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLog10ScaleEngine ());
 }
 
-
-MainWindow::~MainWindow()
-{
-    delete mainPlot;
-    //delete mainCurveZoomer;
-    delete ui;
-    delete ap;
-}
 
 void MainWindow::initPlot(QwtPlot* plot, const char* xTitle, const char* yTitle, int xmin, int xmax, int ymin, int ymax)
 {
@@ -122,14 +154,33 @@ void MainWindow::initPlot(QwtPlot* plot, const char* xTitle, const char* yTitle,
     panner->setMouseButton(Qt::RightButton);
 }
 
+
+
+
+
+// Methods
 void MainWindow::onSoundcardSettingsAction()
 {
     soundSettingsDlg dlg(ap);
     dlg.exec();
 }
 
+
 void MainWindow::onContinuousRunPushButton()
 {
+
+    QImage tmp(myimage->pixmap()->toImage());
+
+    QPainter painter(&tmp);
+    QPen paintpen(Qt::red);
+    paintpen.setWidth(2);
+    QPoint p1;
+    p1.setX(50);
+    p1.setY(30);
+    painter.setPen(paintpen);
+    painter.drawPoint(p1);
+    myimage->setPixmap(QPixmap::fromImage(tmp));
+
     qDebug() << "Device Sample Rate: " << ap->getSampleRate();
     qDebug() << "FFT size: " << DEFAULT_FFT_SIZE;
 
@@ -148,11 +199,87 @@ void MainWindow::onContinuousRunPushButton()
     }
 }
 
+
 void MainWindow::onStopRunPushButton()
 {
     ap->stopAudio();
 }
 
+
+
+
+
+void MainWindow::paintCubeBase(QPainter *painter)
+{
+    //QPainter painter( this );
+
+    //Drawing buttons state ellipses
+      /*  for(int i=0; i<4; i++)
+        {
+            if((*pButtons) & (1<<i))
+                painter.setBrush( Qt::blue );
+            else
+                painter.setBrush( Qt::transparent );
+            painter.setPen(Qt::SolidLine);
+            painter.drawEllipse(10+20*i,10,12,12);
+        }*/
+
+        painter->translate( 50,100 );
+     //painter.eraseRect(10,10,1000,1000);
+
+
+
+        //pCube = cube->getCube();
+
+        for(uint z=0; z<8; z++)
+        {
+            for(uint y=0; y<8; y++)
+            {
+                for(uint x=0; x<8; x++)
+                {
+
+                    QColor lineColor(100, 100, 100, y*4+(8-x)*4); //(R,G,B,alpha)
+                    QColor voxelColor((8-y)*x*1, (8-y)*x*2, 160+y*5+(8-x)*5, 70+y*8+(8-x)*8);
+
+    #define DRAAWLINE
+    #ifdef  DRAAWLINE
+
+                //DRAW LINES
+                    painter->setPen( QPen( lineColor, 1 ,Qt::SolidLine) );
+
+                   // painter.setPen(Qt::DashLine);
+
+                    if(x != 7)
+                        painter->drawLine( SP*x+y*SX, SP*z+y*SY-x*SZ,  SP*x+SP+y*SX,     SP*z+y*SY-(x+1)*SZ );
+                    if(z != 7)
+                        painter->drawLine( SP*x+y*SX, SP*z+y*SY-x*SZ,  SP*x+y*SX,        SP*z+SP+y*SY-x*SZ );
+                    if(y != 7)
+                        painter->drawLine( SP*x+y*SX, SP*z+y*SY-x*SZ,  SP*x+(y+1)*SX,    SP*z+(y+1)*SY-(x+0)*SZ );
+    #endif
+
+                // DRAW VOXELS
+/*
+                    if(( (*(pCube + 8*(7-z) + (7-y))) & (1<<x) ))
+                    {
+                      //  painter.setBrush( Qt::transparent );
+                    //else
+                        painter.setBrush( voxelColor );
+
+                    painter.setPen(Qt::NoPen);
+
+                    // draw led /
+                    painter.drawEllipse( SP*x + y*SX -(CR+y/2)/2,
+                                         SP*z + y*SY -x*SZ  -(CR+y/2)/2,
+                                         CR+y/3+(8-x)/3,  CR+y/3+(8-x)/3  );
+                    }*/
+                }
+            }
+        }
+}
+
+
+
+// SLOTS
 void MainWindow::onFrameProcessed(fftProcessor *fft)
 {
     unsigned int n = fft->getfftSize()/2+1;
@@ -239,3 +366,12 @@ void MainWindow::onFrameProcessed(fftProcessor *fft)
     mainPlot->replot();
 }
 
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+
+    qDebug() << "painter adress in paintEvent: " << (&painter);
+    painter.setBrush(Qt::red);
+    painter.drawRect(100, 100, 100, 100);
+}

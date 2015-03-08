@@ -2,7 +2,7 @@
 # Project Definition
 # -------------------------------------------------
 
-TARGET = "USB Led Cube"
+TARGET = USB_Led_Cube
 TEMPLATE = app
 
 QT += widgets
@@ -10,7 +10,6 @@ QT += svg
 QTPLUGIN += windowsprintersupport
 
 include(C:/Qt/QWT/qwt.pri)
-
 
 #DESTDIR      = bin/
 
@@ -22,6 +21,7 @@ SOURCES +=  src/main.cpp \
             src/pawrapper.cpp \
             src/soundsettingsdlg.cpp \
             src/fftprocessor.cpp \
+    src/usbhid.cpp
 
 
 HEADERS +=  inc/mainwindow.h \
@@ -29,6 +29,8 @@ HEADERS +=  inc/mainwindow.h \
             inc/soundsettingsdlg.h \
             inc/static_settings.h \
             inc/fftw/fftw3.h \
+    src/usbhid.h \
+    inc/usbhid.h
 
 
 FORMS +=    ui/mainwindow.ui \
@@ -72,11 +74,11 @@ SOURCES +=  src/pa/pa_front.c \
 win32:DEFINES += PA_NO_ASIO # PA_NO_WMME
 
 win32:SOURCES += src/pa/pa_win_ds.c \
-            src/pa/pa_win_hostapis.c \
-            src/pa/pa_win_util.c \
-            src/pa/pa_win_ds_dynlink.c \
-            src/pa/pa_win_waveformat.c \
-            src/pa/pa_win_wmme.c # src/pa/pa_asio.cpp
+                 src/pa/pa_win_hostapis.c \
+                 src/pa/pa_win_util.c \
+                 src/pa/pa_win_ds_dynlink.c \
+                 src/pa/pa_win_waveformat.c \
+                 src/pa/pa_win_wmme.c # src/pa/pa_asio.cpp
 
 
 #specify path to direct-x SDK header directory

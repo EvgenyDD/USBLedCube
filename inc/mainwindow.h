@@ -20,6 +20,11 @@
 #include <qwt_plot_grid.h>
 #include <qwt_scale_engine.h>
 
+#include <QPainter>
+#include <QPixmap>
+#include <QGraphicsScene>
+#include <QLabel>
+
 #include "fftprocessor.h"
 
 //#include "audioprocessor_io_copy.h"
@@ -30,6 +35,12 @@
 #include <qwt_plot_histogram.h>
 
 #include "static_settings.h"
+
+#define SP  space
+#define SX  deltaX
+#define SY  deltaY
+#define SZ  deltaZ
+#define CR  voxelDiameter
 
 namespace Ui
 {
@@ -46,6 +57,9 @@ public:
 
   audioProcessor *ap;
 
+protected:
+    void paintEvent( QPaintEvent *event );
+
 private:
   Ui::MainWindowClass *ui;
 
@@ -60,6 +74,13 @@ private:
   double *subCurveYData;
 
   void initPlot(QwtPlot* plot, const char* xTitle, const char* yTitle, int xmin, int xmax, int ymin, int ymax);
+  void setCentralWidget();
+  void paintCubeBase(QPainter *painter);
+
+  QPixmap *pix;
+  QLabel *myimage;
+
+  unsigned char space, deltaX, deltaY, voxelDiameter, deltaZ; //for cube drawing correction
 
 public slots:
   void onSoundcardSettingsAction();
