@@ -7,21 +7,27 @@ TEMPLATE = app
 
 QT += widgets
 QT += svg
-QTPLUGIN += windowsprintersupport
+#QTPLUGIN += windowsprintersupport
+#QT += printsupport
+
+RC_FILE = exeicon.rc
+
+CONFIG += c++11
 
 include(C:/Qt/QWT/qwt.pri)
 
 #DESTDIR      = bin/
-
-QT += printsupport
-
 
 SOURCES +=  src/main.cpp \
             src/mainwindow.cpp \
             src/pawrapper.cpp \
             src/soundsettingsdlg.cpp \
             src/fftprocessor.cpp \
-    src/usbhid.cpp
+            src/usbhid.cpp \
+            src/paint.cpp \
+            src/fft.cpp \
+            src/ui.cpp \
+            src/cubeclass.cpp
 
 
 HEADERS +=  inc/mainwindow.h \
@@ -29,12 +35,13 @@ HEADERS +=  inc/mainwindow.h \
             inc/soundsettingsdlg.h \
             inc/static_settings.h \
             inc/fftw/fftw3.h \
-    src/usbhid.h \
-    inc/usbhid.h
+            src/usbhid.h \
+            inc/usbhid.h \
+            inc/hidapi.h \
+            inc/cubeclass.h
 
 
-FORMS +=    ui/mainwindow.ui \
-            ui/soundsettingsdlg.ui
+FORMS +=    ui/soundsettingsdlg.ui
 
 INCLUDEPATH += inc/ \
             inc/pa/ \
@@ -84,12 +91,21 @@ win32:SOURCES += src/pa/pa_win_ds.c \
 #specify path to direct-x SDK header directory
 #win32:INCLUDEPATH += inc\dx
 
-INCLUDEPATH += "C:/Program Files (x86)/Microsoft DirectX SDK (November 2008)/Include"
-
+#INCLUDEPATH += "C:/Program Files (x86)/Microsoft DirectX SDK (November 2008)/Include"
 
 win32:LIBS +=   -ldsound \
                 -lwinmm \
                 -lole32 \
 
 win32:LIBS +=   -lfftw3-3 \
-                -L$$PWD/lib/fftw
+                -L$$PWD/lib/fftw \
+                -L$$PWD/lib/
+
+OTHER_FILES += \
+    hidapi.dll \
+    lib/fftw/libfftw3-3.a \
+    lib/fftw/libfftw3-3.dll \
+    lib/fftw/libfftw3f-3.a \
+    lib/fftw/libfftw3f-3.dll \
+    lib/fftw/libfftw3l-3.a \
+    lib/fftw/libfftw3l-3.dll

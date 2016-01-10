@@ -13,7 +13,7 @@
 
 #define NO_OF_FRAME_LENGTHS 6
 #define START_FRAME_LENGTH 128
-#define DEFAULT_FRAME_LENGTH 512
+#define DEFAULT_FRAME_LENGTH 256
 
 //DEFAULT_FFT_SIZE must be greater or equal to DEFAULT_FRAME_LENGTH
 //As the FFT size can not be adjusted at the moment, set FFT length to a maximum:

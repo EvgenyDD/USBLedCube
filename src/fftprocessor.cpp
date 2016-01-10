@@ -11,26 +11,29 @@
 #include "fftprocessor.h"
 #include <math.h>
 
+
 fftProcessor::fftProcessor(int fftSize)
 {
-  this->fftSize = fftSize;
+    this->fftSize = fftSize;
 
-  outArraySize = fftSize/2+1;
+    outArraySize = fftSize/2+1;
 
-  fftIn = (double*) fftw_malloc(sizeof(double) * fftSize);
-  fftOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * outArraySize);
-  fftOutAbs = (double*) fftw_malloc(sizeof(double) * outArraySize);
+    fftIn = (double*) fftw_malloc(sizeof(double) * fftSize);
+    fftOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * outArraySize);
+    fftOutAbs = (double*) fftw_malloc(sizeof(double) * outArraySize);
 
-  fftwPlan = fftw_plan_dft_r2c_1d(fftSize, fftIn, fftOut, FFTW_ESTIMATE);
-//	fftwPlan = fftw_plan_dft_r2c_1d(fftSize, fftIn, fftOut, FFTW_MEASURE);
+    fftwPlan = fftw_plan_dft_r2c_1d(fftSize, fftIn, fftOut, FFTW_ESTIMATE);
+    //	fftwPlan = fftw_plan_dft_r2c_1d(fftSize, fftIn, fftOut, FFTW_MEASURE);
 }
+
 
 fftProcessor::~fftProcessor()
 {
-  fftw_free(fftIn);
-  fftw_free(fftOut);
-  fftw_free(fftOutAbs);
+    fftw_free(fftIn);
+    fftw_free(fftOut);
+    fftw_free(fftOutAbs);
 }
+
 
 void fftProcessor::calcAbsResponse()
 {
@@ -38,6 +41,7 @@ void fftProcessor::calcAbsResponse()
     for(int i=0; i < n; i++)
         fftOutAbs[i] = sqrt(fftOut[i][0]*fftOut[i][0] + fftOut[i][1]*fftOut[i][1]);
 }
+
 
 void fftProcessor::execute()
 {

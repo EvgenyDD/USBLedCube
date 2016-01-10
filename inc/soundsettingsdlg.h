@@ -15,25 +15,25 @@
 #include "paWrapper.h"
 
 namespace Ui {
-  class soundSettingsDlg;
+class soundSettingsDlg;
 }
 
 class soundSettingsDlg : public QDialog {
-  Q_OBJECT
-  Q_DISABLE_COPY(soundSettingsDlg)
+    Q_OBJECT
+    Q_DISABLE_COPY(soundSettingsDlg)
 public:
-  explicit soundSettingsDlg(paWrapper *paw, QWidget *parent = 0);
-  virtual ~soundSettingsDlg();
+    explicit soundSettingsDlg(paWrapper *paw, QWidget *parent = 0);
+    virtual ~soundSettingsDlg();
 
 protected:
-  virtual void changeEvent(QEvent *e);
+    virtual void changeEvent(QEvent *e);
 
 private:
-  Ui::soundSettingsDlg *m_ui;
-  paWrapper *paw;
+    Ui::soundSettingsDlg *m_ui;
+    paWrapper *paw;
 
 public slots:
-  void onAccept();
+    void onAccept();
 };
 
 #endif // SOUNDSETTINGSDLG_H

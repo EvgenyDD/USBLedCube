@@ -26,12 +26,12 @@ int paWrapper::processingCallback(const void *inputBuffer,
                                   const PaStreamCallbackTimeInfo* timeInfo,
                                   PaStreamCallbackFlags statusFlags)
 {
-  (void) inputBuffer; // Prevent unused variable warning.
-  (void) outputBuffer; // Prevent unused variable warning.
-  (void) framesPerBuffer; // Prevent unused variable warning.
-  (void) timeInfo; // Prevent unused variable warning.
-  (void) statusFlags; // Prevent unused variable warning.
-  return 0;
+    (void) inputBuffer; // Prevent unused variable warning.
+    (void) outputBuffer; // Prevent unused variable warning.
+    (void) framesPerBuffer; // Prevent unused variable warning.
+    (void) timeInfo; // Prevent unused variable warning.
+    (void) statusFlags; // Prevent unused variable warning.
+    return 0;
 }
 
 paWrapper::paWrapper()
@@ -101,12 +101,12 @@ void paWrapper::initAudio()
     inputStreamParam.suggestedLatency = suggestedLatency;
     inputStreamParam.hostApiSpecificStreamInfo = NULL;
 
-    if(outputStreamParam.device > 0)
+    /*if(outputStreamParam.device > 0)
         sampleRate = getDefaultSampleRate(outputStreamParam.device);
-    else
-        sampleRate = 44100.0;
+    else*/
+    sampleRate = 15000;//44100.0;
 
-    frameLength = 1024; //set to a useful value
+    frameLength = 256; //set to a useful value
 
     qDebug() << " Default output device is " << Pa_GetDefaultOutputDevice();
     qDebug() << " Default input device is " << Pa_GetDefaultOutputDevice();
@@ -128,13 +128,13 @@ int paWrapper::startAudio(void)
     isRunning = true;
 
     err = Pa_OpenStream(&stream,
-                      &inputStreamParam,
-                      &outputStreamParam,
-                      sampleRate,
-                      frameLength,
-                      paNoFlag,
-                      &paWrapper::paStaticCallback,
-                      this);
+                        &inputStreamParam,
+                        &outputStreamParam,
+                        sampleRate,
+                        frameLength,
+                        paNoFlag,
+                        &paWrapper::paStaticCallback,
+                        this);
 
     if(err != paNoError)
     {
