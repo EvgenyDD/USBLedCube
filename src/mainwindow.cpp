@@ -231,6 +231,8 @@ void MainWindow::onRadio_Monitor()
     HIDDevice->SetRxFromDevice();
 
     effectsBox->setVisible(false);
+    VolumeCheckSmooth->setVisible(false);
+    SpectreCheckSmooth->setVisible(false);
     deviceBox->setVisible(false);
 
     if(ap->isRunning)
@@ -249,7 +251,8 @@ void MainWindow::onRadio_Effects()
     Cube->newEffect = effectsBox->currentIndex();
 
     effectsBox->setVisible(true);
-
+    VolumeCheckSmooth->setVisible(false);
+    SpectreCheckSmooth->setVisible(false);
     deviceBox->setVisible(false);
 
     if(ap->isRunning)
